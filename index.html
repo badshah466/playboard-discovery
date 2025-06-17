@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YouTube Channel Finder</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input, select, button { margin: 5px; padding: 8px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  </style>
+</head>
+<body>
+  <h2>🔍 YouTube Channel Finder</h2>
+
+  <label>Keyword: <input type="text" id="keyword" value="fitness" /></label><br>
+  <label>Min Subs: <input type="number" id="minSubs" value="10000" /></label><br>
+  <label>Max Subs: <input type="number" id="maxSubs" value="100000" /></label><br>
+  <label>Country:
+    <select id="country">
+      <option value="us">United States</option>
+      <option value="in">India</option>
+      <option value="gb">UK</option>
+      <option value="ca">Canada</option>
+      <!-- Add more as needed -->
+    </select>
+  </label><br>
+  <button onclick="searchChannels()">Search Channels</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function searchChannels() {
+      const keyword = document.getElementById("keyword").value;
+      const minSubs = document.getElementById("minSubs").value;
+      const maxSubs = document.getElementById("maxSubs").value;
+      const country = document.getElementById("country").value;
+
+      const res = await fetch(`/api/scrape?keyword=${keyword}&minSubs=${minSubs}&maxSubs=${maxSubs}&country=${country}`);
+      const data = await res.json();
+
+      let html = "<table><tr><th>Channel</th><th>Subscribers</th><th>Link</th></tr>";
+      data.forEach(ch => {
+        html += `<tr>
+                  <td>${ch.name}</td>
+                  <td>${ch.subscribers.toLocaleString()}</td>
+                  <td><a href="${ch.url}" target="_blank">Visit</a></td>
+                </tr>`;
+      });
+      html += "</table>";
+
+      document.getElementById("result").innerHTML = html;
+    }
+  </script>
+</body>
+</html>
